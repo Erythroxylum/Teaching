@@ -1,0 +1,194 @@
+---
+title: 'Assignment 6 Guide: Phylogenetic analyses of evolutionary origins'
+output: html_document
+---
+
+The purpose of this lab will be to demonstrate the utility of phylogenetic reconstruction in two fields of research: forensics and plant domestication. Once again, we will be looking at real data; the forensics data being old and the plant domestication data being very, very new.
+
+Part 1: Why dentists wear gloves.
+--------------------------------
+
+In the year 1990, a woman in Florida (patient A) accused her HIV-positive dentist of infecting her with HIV as he conducted invasive dental procedures. After this situation became widely publicized, the state of Florida tested 1100 individuals, including previous patients of the infamous DDS, and sequenced their viral strains in order to understand its epidemiology. How could the courts test whether patient A's claim was valid? How could they tell whether patients with HIV were infected by the dentist or by another person or behavior?
+
+Phylogenetics! And this became a seminal study in the field. Go online and find the research article describing this study, published in Science in 1992 with the title, "Molecular Epidemiology of HIV Transmission in a Dental Practice". 
+
+### The Data  ###
+
+As a thought experiment, if you were a scientist for the prosecution or the defense, how would you go about conducting or criticizing this phylogenetic analysis? In 1990, phylogenetic theory was well established but application of molecular sequence data in phylogenetics was still in its infancy. What is the theoretical basis of using DNA sequences and phylogenetic trees to figure out if patient A and other patients had been infected with HIV by this exact individual? Why phylogeny? 
+
+Phylogeny estimates the evolutionary relationships of organisms. It is a tool for understanding geneology of DNA sequences and also the individuals and species that contain these DNA sequences in their genomes. But the thought experiment continues... What DNA sequences should you examine for this case? This involves knowledge of the construction of viral genomes as well as how different genes evolve. Do all genes evolve at a similar rate? What relative (fast, slow) rate of evolution do you think is desirable for this situation? If you can understand the merit of these questions and propose answers then you are closer to understanding the fundamentals of phylogenetic theory.
+
+The researchers chose to analyze part of the the GB120 gene. Check out this Wikipedia website, and ask yourself why they made this decision. 
+<https://en.wikipedia.org/wiki/Envelope_glycoprotein_GP120>
+
+#### Obtain the DNA sequences ####
+
+How do you get sequence data from a publication? Pubmed makes it easy:
+
+1. Go to: <http://www.ncbi.nlm.nih.gov/pubmed/1589796>
+2. On the right hand side of the webpage is a section called "Related information", click "Nucleotide".
+3. On top right of screen, click "Send to" > File > Format=fasta
+4. Then click "create file" and the fasta will be downloaded
+
+See what the other file types contain as well (summary, etc).
+
+#### Reorganize the DNA sequences ####
+
+You will now have a list of DNA sequences that were submitted to Genbank in FASTA format. Take a look at the sequences by opening the sequence.fasta document in a text editor program. You will see a lot of information in the header line (>...), followed by the DNA sequence in the next line. You will notice there are two regions (or loci) of the gb120 gene that are present, as signified by the last part of the header file. To make things simple, as this would require many more programs in R, I have extracted the v3 locus sequences, cleaned up the headers, and aligned the sequences. You can download the clean sequence from the link below:
+
+<https://www.dropbox.com/sh/w3ibcpzbn67xy8u/AACoHkkmynUUDfqyEHfQ7g0sa?dl=0>
+
+There are many algorithms used to reconstruct phylogenetic trees (hereafter "trees"). We will be using a method that is computationally relatively simple and thus can be run very quickly on your laptop. Neighbor-Joining (NJ) is a clustering method that uses a distance matrix created from the DNA or protein sequence of each sample. We will implement this method using the R package `phangorn`. Install the package (slightly different method, see below) and load it in your library. You will also need to load `ape`.
+
+```{r}
+# Set the CRAN mirror
+#options(repos = c(CRAN = "https://cran.rstudio.com"))
+#install.packages("phangorn")
+
+# load libraries
+library(phangorn)
+library(ape)
+```
+
+
+For a quick list of functions in this package:
+```{r}
+#library(help = "phangorn")
+```
+
+Use this website to access a full tutorial of the phylogenetic reconstruction tools available in `phangorn`. This is your best guide to complete Assignment 6:
+ <https://cran.r-project.org/web/packages/phangorn/vignettes/Trees.pdf>
+
+##### Load the sequence data #####
+
+What is the format of our sequence data? This is important. Read in the alignment: 
+```{r}
+v3 <- read.phyDat("v3.align.fasta", format = "fasta", type = "DNA")
+class(v3)
+```
+
+### Reconstruct NJ tree ###
+
+NJ is a distance based method. That means to recnstruct the tree we need to make a distance matrix for pairwise distances between sequences. Make a distance matrix using the `ape` function `dist.dna`.
+
+```{r}
+?dist.dna
+```
+
+We need to transform the data to class DNAbin !
+```{r}
+v3 <- as.DNAbin(v3)
+class(v3)
+v3.dist <- dist.dna(v3)
+```
+
+View the object v3. What does it show you?
+
+Now we need to make the NJ tree and reroot it to make it look more like the tree in the Ou et al. paper.::
+```{r}
+v3.tree <- NJ(v3.dist)
+plot(v3.tree)
+#visualize tip labels and reroot at the proper tips
+tiplabels()
+v3.tree <- root(v3.tree, 1:3)
+```
+
+And lets color the tips of the tree so it is easier to interpret:
+```{r}
+# Initialize cols with a default color
+cols <- rep("black", length(v3.tree$tip.label))
+
+# Assign specific colors based on partial matches in tip labels
+cols[grep("^LC03", v3.tree$tip.label)] <- "brown"
+cols[grep("^LC02", v3.tree$tip.label)] <- "darkcyan"
+cols[grep("^LC09", v3.tree$tip.label)] <- "chartreuse"
+cols[grep("^FLPA", v3.tree$tip.label)] <- "blue"
+cols[grep("^FLPB", v3.tree$tip.label)] <- "darkred"
+cols[grep("^FLPC", v3.tree$tip.label)] <- "black"
+cols[grep("^FLPD", v3.tree$tip.label)] <- "aquamarine2"
+cols[grep("^FLPE", v3.tree$tip.label)] <- "darkorange"
+cols[grep("^FLPF", v3.tree$tip.label)] <- "coral"
+cols[grep("^FLPG", v3.tree$tip.label)] <- "slategray"
+cols[grep("^FLPH", v3.tree$tip.label)] <- "darkgreen"
+cols[grep("^FLD", v3.tree$tip.label)] <- "red"
+
+# Plot the tree with specified tip colors
+plot(v3.tree, tip.color = cols, cex=0.5)
+```
+
+Congratulations! You just reconstructed a phylogeny.
+
+##### Phylogeny stats #####
+
+Lets get the parsimony score and likelihood of this tree.
+```{r}
+# Convert DNAbin data to phyDat format for phangorn package
+v3_phydat <- phyDat(v3)
+
+# Calculate the parsimony score
+parsimony_score <- parsimony(v3.tree, v3_phydat)
+
+# Calculate the likelihood
+pml_result <- pml(v3.tree, data = v3_phydat)
+```
+By themselves these statistics are not very useful, but if we needed to compare different trees (i.e. those reconstructed with different methods) then they can help inform our decision about which trees best fit the data.
+
+### Conclusions about the case ###
+
+As you can see, there are multiple samples per individual in the analysis, and the monophyly of these samples is key to understanding patterns of infection. But first, why are there multiple sequences per individual? Take another look at the paper if you forget what the tip labels mean. You will also notice that the total number of individuals in the tree is much smaller than the total number of sequences we originally downloaded from Pubmed. If you look through that original sequence.fasta, you will see many other samples that I did not include in the v3.align.fasta. Many of the rest of these were other local controls (LC), so those are not necessary for our purposes. I also reduced the number of total sequences per individual in the analysis if all of their sequences formed a single monophyletic group, just so the tree is easier to look at.
+
+The individuals on the tip clades of the tree FLPD, LC03, FLPH, FLPF, and LCO2 and LC03 form monophyletic groups (there is one exception, what could have happened there?) and are more distantly related to the dentist samples on the bottom half of the tree. This suggests that each of these individuals has not infected another one of the individuals in the study. However, the relationships of sequences around the bottom half of the tree are complicated. Another interesting observation is that the branch lengths are shorter in the bottom half of the tree - in the "Dentist" clade. Why are these branches shorter? Both regarding the sequence data and the general relationships of HIV strains in these individuals. 
+
+Understanding the patterns of transmission in this case is not very easy and I would encourage you to talk with your classmates about your interpretation of the data.
+
+Did the dentist, not wearing gloves, infect patient A? Explain.
+
+
+Part 2: The first cokeheads
+---------------------------
+
+Where does cocaine come from? Plants. Which plants? A group of tropical shrubs and small trees in the genus *Erythroxylum*. More specifically, Field Museum botanist Tim Plowman taught us that there are two species  cultivated in South America for coca leaf and cocaine markets, *Erythroxylum coca* and *Erythroxylum novogranatense*. 
+
+Coca is one of the most important plants ever domesticated. This is because it is revered by the indigenous groups that cultivate it due to its medicinal and mild stimilant properties, and because of the role of cocaine in Western medicine. Before cocaine was isolated in 1857 by the German chemist Albert Niemann and its properties were discovered, the options people had for anesthesia boiled down to ether and opium. Cocaine was the first ever local anesthesethic, or localized numbing agent, and all modern local anesthetics have been developed based on this infamous plant metabolite.
+
+Also, the title of this section is representative of an ignorant and harmful ideology towards folk medicine and plant-human interactions. The effects of coca leaf chewing and cocaine use are not comparable. The title is a  facetious attempt to illustrate the unfortunate truth that the only point of reference most people in Western culture have for this ancient, complex, and useful crop is one of its many bioactive compounds: the alkaloid cocaine. Please take a look at this fresh review of the ethnobotany of coca to understand the important role of this plant in the lives of Andean and Amazonian peoples: <https://www.researchgate.net/publication/303315045_The_Botanical_Science_and_Cultural_Value_of_Coca_Leaf_in_South_America>.
+
+We are interested in knowing where and when plants and animals were domesticated. Domestication and artificial selection studies have fostered some of our most important conceptual advances in evolution; "Variation Under Domestication" is the first chapter in <u>On the Origin of Species<u>.
+
+### Where is the coca plant from? What are is closest wild relatives genetically and morphologically? ###
+
+Neither of the two cultivated species persist in the wild, and where they are grown now might be far from where they . Plowman says they are more similar to each other than they are to 
+
+
+### Load the data ###
+
+For this part, we will be using a DNA alignment made from two loci: part of the nuclear ribosomal cistron (ITS1+5.8s+ITS2) <https://en.wikipedia.org/wiki/Internal_transcribed_spacer>, and a non-coding locus in the chloroplast (rpl32-trnL intergenic spacer) <http://www.amjbot.org/content/94/3/275.abstract>. I have stitched these two loci together (concatenated) and aligned them across 97 *Erythroxylum* taxa. You can find the alignment, coca_ITS_rpl.phy, in the same assignment data folder: <https://www.dropbox.com/sh/w3ibcpzbn67xy8u/AACoHkkmynUUDfqyEHfQ7g0sa?dl=0>
+
+```{r}
+coca <- read.phyDat("coca.fasta", format = "fasta", type = "DNA")
+```
+
+### Reconstruct tree using UPGMA algorithm ###
+
+This reconstruction will use another distance method, unweighted pair group method with arithmetic mean (<https://en.wikipedia.org/wiki/UPGMA> for a quick overview). Create an UPGMA tree with the median agglomeration method:
+
+```{r}
+# Convert to DNAbin format
+coca.bin <- as.DNAbin(coca)
+
+# Calculate the distance matrix with pairwise deletion for missing data
+coca.dist <- dist.dna(coca.bin, pairwise.deletion = TRUE)
+
+# Construct the tree with the neighbor joining method
+#coca.tree <- upgma(coca.dist, method = "median")
+coca.tree <- nj(coca.dist)
+
+# Plot the tree
+#plot(coca.tree, cex=0.5, no.margin = T)
+#plot(coca.tree, type = "fan", cex = 0.5, no.margin = TRUE)
+plot(coca.tree, cex = 0.5, no.margin = TRUE, align.tip.label = TRUE)
+```
+
+
+
+
