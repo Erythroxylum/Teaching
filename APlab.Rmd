@@ -188,7 +188,10 @@ coca.tree <- nj(coca.dist)
 #plot(coca.tree, type = "fan", cex = 0.5, no.margin = TRUE)
 plot(coca.tree, cex = 0.5, no.margin = TRUE, align.tip.label = TRUE)
 ```
+
 ### Inference. ###
+
+Reroot the tree at EN02_E_nitidulum.
 
 How many clades do the coca species make?
 
