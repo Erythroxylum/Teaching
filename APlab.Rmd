@@ -36,6 +36,7 @@ See what the other file types contain as well (summary, etc).
 
 You will now have a list of DNA sequences that were submitted to Genbank in FASTA format. Take a look at the sequences by opening the sequence.fasta document in a text editor program. You will see a lot of information in the header line (>...), followed by the DNA sequence in the next line. You will notice there are two regions (or loci) of the gb120 gene that are present, as signified by the last part of the header file. To make things simple, as this would require many more programs in R, I have extracted the v3 locus sequences, cleaned up the headers, and aligned the sequences. You can download the clean sequence from the link below:
 
+Get v3.align.fasta and place it in your working directory.
 <https://www.dropbox.com/sh/w3ibcpzbn67xy8u/AACoHkkmynUUDfqyEHfQ7g0sa?dl=0>
 
 There are many algorithms used to reconstruct phylogenetic trees (hereafter "trees"). We will be using a method that is computationally relatively simple and thus can be run very quickly on your laptop. Neighbor-Joining (NJ) is a clustering method that uses a distance matrix created from the DNA or protein sequence of each sample. We will implement this method using the R package `phangorn`. Install the package (slightly different method, see below) and load it in your library. You will also need to load `ape`.
@@ -194,3 +195,5 @@ How many clades do the coca species make?
 What are the closest wild relatives of the coca species?
 
 Use GBIF to look at the distributions of these close relatives. Tell me a story in light of your phylogeny about where, when, and how many times the coca species were domesticated?
+
+I have simply provided you a file with DNA sequences from a set of *Erythroxylum* species. To have the most confidence in your answer above, what considerations should go into the selection of species and samples that you are analyzing?
