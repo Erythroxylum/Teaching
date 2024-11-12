@@ -149,16 +149,15 @@ Part 2: Multiple origins of domestication of a notorious medicinal plant
 
 Where does cocaine come from? Plants. Which plants? A group of tropical shrubs and small trees in the genus *Erythroxylum*. More specifically, Field Museum botanist Tim Plowman taught us that there are two species  cultivated in South America for coca leaf and cocaine markets, *Erythroxylum coca* and *Erythroxylum novogranatense*. 
 
-Coca is one of the most important plants ever domesticated. This is because it is revered by the indigenous groups that cultivate it due to its medicinal and mild stimilant properties, and because of the role of cocaine in Western medicine. Before cocaine was isolated in 1857 by the German chemist Albert Niemann and its properties were discovered, the options people had for anesthesia boiled down to ether and opium. Cocaine was the first ever local anesthesethic, or localized numbing agent, and all modern local anesthetics have been developed based on this infamous plant metabolite.
+The effects of coca leaf chewing and cocaine use are not comparable. It is an unfortunate truth that the only point of reference most people in Western culture have for this ancient, complex, and useful crop is but one of its many bioactive compounds: the alkaloid cocaine. Please take a look at this fresh review of the ethnobotany of coca to understand the important role of this plant in the lives of Andean and Amazonian peoples: <https://www.researchgate.net/publication/303315045_The_Botanical_Science_and_Cultural_Value_of_Coca_Leaf_in_South_America>.
 
-Also, the title of this section is representative of an ignorant and harmful ideology towards folk medicine and plant-human interactions. The effects of coca leaf chewing and cocaine use are not comparable. The title is a  facetious attempt to illustrate the unfortunate truth that the only point of reference most people in Western culture have for this ancient, complex, and useful crop is one of its many bioactive compounds: the alkaloid cocaine. Please take a look at this fresh review of the ethnobotany of coca to understand the important role of this plant in the lives of Andean and Amazonian peoples: <https://www.researchgate.net/publication/303315045_The_Botanical_Science_and_Cultural_Value_of_Coca_Leaf_in_South_America>.
+Coca is one of the most useful plants ever domesticated. It is revered by the indigenous groups that cultivate it due to its medicinal and mild stimilant properties, and because of the role of cocaine in Western medicine. Before cocaine was isolated in 1857 by the German chemist Albert Niemann and its properties were discovered, the options people had for anesthesia boiled down to ether and opium. Cocaine was the first ever local anesthesethic, or localized numbing agent, and all modern local anesthetics have been developed based on this infamous plant metabolite.
 
 We are interested in knowing where and when plants and animals were domesticated. Domestication and artificial selection studies have fostered some of our most important conceptual advances in evolution; "Variation Under Domestication" is the first chapter in <u>On the Origin of Species<u>.
 
 ### Where is the coca plant from? What are is closest wild relatives genetically and morphologically? ###
 
-Neither of the two cultivated species persist in the wild, and where they are grown now might be far from where they . Plowman says they are more similar to each other than they are to 
-
+Neither of the two cultivated species persist in the wild, and where they are grown now in South America could be quite distant from from where they were first cultivated. Plowman hypothesized that the two coca species are more similar to each other than they are to other wild species, but the best data for understanding geneology is DNA markers. As evolutionary biologists, we use phylogenetic trees to establish the blueprint of how lineages are related to one another and have evolved through time. Then as a second step, we can use the phylogeny to posit the changes in their morphological characteristics that have occurred in order to fit the shape of the phylogeny.
 
 ### Load the data ###
 
@@ -188,7 +187,10 @@ coca.tree <- nj(coca.dist)
 #plot(coca.tree, type = "fan", cex = 0.5, no.margin = TRUE)
 plot(coca.tree, cex = 0.5, no.margin = TRUE, align.tip.label = TRUE)
 ```
+### Inference. ###
 
+How many clades do the coca species make?
 
+What are the closest wild relatives of the coca species?
 
-
+Use GBIF to look at the distributions of these close relatives. Tell me a story in light of your phylogeny about where, when, and how many times the coca species were domesticated?
